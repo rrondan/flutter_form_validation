@@ -6,3 +6,4 @@ bool isNumeric( String s){
 
   return number != null;
 }
+

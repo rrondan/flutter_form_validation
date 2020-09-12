@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_form_validation/src/bloc/products_bloc.dart';
+import 'package:flutter_form_validation/src/bloc/provider.dart';
+import 'package:flutter_form_validation/src/dialogs/progress_dialog.dart';
 import 'package:flutter_form_validation/src/models/producto_model.dart';
-import 'package:flutter_form_validation/src/providers/products_provider.dart';
+import 'package:flutter_form_validation/src/utils/my_images.dart';
 import 'package:flutter_form_validation/src/utils/utils.dart' as utils;
+import 'package:image_picker/image_picker.dart';
 
 class ProductPage extends StatefulWidget {
 
@@ -13,24 +19,36 @@ class _ProductPageState extends State<ProductPage> {
   final _formKey = GlobalKey<FormState>();
 
   ProductoModel _producto = new ProductoModel();
-  final _productProvider  = new ProductsProvider();
+
+  File _photo;
+  bool _loading = false;
+  ProgressDialog _progressDialog;
+  ProductsBloc _productsBloc;
 
   @override
   Widget build(BuildContext context) {
+    final ProductoModel prodData = ModalRoute.of(context).settings.arguments;
+    if(_productsBloc == null){
+      _productsBloc = Provider.productsBloc(context);
+    }
+    if(prodData != null){
+      _producto = prodData;
+    }
+    if(_progressDialog == null){
+      _progressDialog = ProgressDialog(context);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Producto"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.photo_size_select_actual),
-            onPressed: (){
-            },
+            onPressed: () => _processImage(ImageSource.gallery),
           ),
           IconButton(
             icon: Icon(Icons.camera_alt),
-            onPressed: (){
-
-            },
+            onPressed: () => _processImage(ImageSource.camera),
           )
         ],
       ),
@@ -41,6 +59,7 @@ class _ProductPageState extends State<ProductPage> {
             key: _formKey,
             child: Column(
               children: <Widget>[
+                _showPhoto(),
                 _createName(),
                 _createPrice(),
                 _createAvailable(),
@@ -51,6 +70,24 @@ class _ProductPageState extends State<ProductPage> {
         ),
       ),
     );
+  }
+
+  Widget _showPhoto(){
+    if(_producto.fotoUrl != null){
+      return FadeInImage(
+        image: NetworkImage(_producto.fotoUrl),
+        placeholder: AssetImage(MyImages.LOADING),
+        height: 300.0,
+        fit: BoxFit.contain,
+      );
+    } else {
+      return Image(
+        image: _photo != null ? FileImage(_photo)
+            : AssetImage(MyImages.NO_IMAGE),
+        height: 300,
+        fit: BoxFit.cover,
+      );
+    }
   }
 
   Widget _createName(){
@@ -109,11 +146,11 @@ class _ProductPageState extends State<ProductPage> {
       textColor: Colors.white,
       icon: Icon(Icons.save),
       label: Text("Guardar"),
-      onPressed: _summit,
+      onPressed: !_loading ? _summit : null,
     );
   }
 
-  void _summit(){
+  void _summit() async{
 
     //Esta funcion solo valida el formulario
     if(!_formKey.currentState.validate()) return;
@@ -121,12 +158,31 @@ class _ProductPageState extends State<ProductPage> {
     //Vamos a guardar el formulario
     _formKey.currentState.save();
 
+    setState(() => _loading = true );
+    _progressDialog.show();
 
-    print("TODO esta OK!");
-    print( _producto.titulo );
-    print( _producto.valor );
-    print( _producto.disponible );
+    if(_photo != null){
+      _producto.fotoUrl = await _productsBloc.uploadImage(_photo);
+    }
 
-    _productProvider.createProduct(_producto);
+    if(_producto.id == null) {
+      await _productsBloc.addProduct(_producto);
+    } else {
+      await _productsBloc.editProduct(_producto);
+    }
+
+    setState(() => _loading = false );
+    _progressDialog.hide();
+    Navigator.pop(context);
+  }
+
+  void _processImage(ImageSource source) async{
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: source);
+    _photo = File(pickedFile.path);
+    if(_photo != null){
+      _producto.fotoUrl = null;
+    }
+    setState(() { });
   }
 }

@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_validation/src/bloc/login_bloc.dart';
+import 'package:flutter_form_validation/src/bloc/products_bloc.dart';
 
 class Provider extends InheritedWidget{
 
@@ -18,12 +19,19 @@ class Provider extends InheritedWidget{
       : super(key: key, child:child);
 
   final loginBloc = LoginBloc();
+  final _productsBloc = ProductsBloc();
 
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
+  //Retornamos el provider
   static Provider of (BuildContext context){
     return context.dependOnInheritedWidgetOfExactType<Provider>() ;
+  }
+
+  //Retornando un atributo de la Clase.
+  static ProductsBloc productsBloc (BuildContext context){
+    return context.dependOnInheritedWidgetOfExactType<Provider>()._productsBloc ;
   }
 
 }
