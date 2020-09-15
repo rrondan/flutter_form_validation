@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_validation/src/bloc/products_bloc.dart';
+import 'package:flutter_form_validation/src/bloc/products_firebase_bloc.dart';
 import 'package:flutter_form_validation/src/bloc/provider.dart';
 import 'package:flutter_form_validation/src/models/producto_model.dart';
 import 'package:flutter_form_validation/src/utils/my_images.dart';
@@ -8,8 +9,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.productsBloc(context);
-    bloc.loadProducts();
+    final bloc = Provider.of(context).productsFirebaseBloc;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _createListProducts(ProductsBloc productsBloc){
+  Widget _createListProducts(ProductsFirebaseBloc productsBloc){
     return StreamBuilder<List<ProductoModel>>(
       stream: productsBloc.productsStream,
       builder: (context,AsyncSnapshot<List<ProductoModel>> snapshot){
@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _createItem(BuildContext context, ProductoModel product, ProductsBloc productsBloc){
+  Widget _createItem(BuildContext context, ProductoModel product, ProductsFirebaseBloc productsBloc){
     return Dismissible(
       key: UniqueKey(),
       background: Container(color: Colors.red),

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return Provider(
       child: MaterialApp(
         title: 'Material App',
-        initialRoute: "login",
+        initialRoute: "home",
         debugShowCheckedModeBanner: false,
         routes: {
           "login": (BuildContext context) => LoginPage(),

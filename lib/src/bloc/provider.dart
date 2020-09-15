@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_form_validation/src/bloc/login_bloc.dart';
 import 'package:flutter_form_validation/src/bloc/products_bloc.dart';
+import 'package:flutter_form_validation/src/bloc/products_firebase_bloc.dart';
 
 class Provider extends InheritedWidget{
 
@@ -19,6 +20,7 @@ class Provider extends InheritedWidget{
       : super(key: key, child:child);
 
   final loginBloc = LoginBloc();
+  final productsFirebaseBloc = ProductsFirebaseBloc();
   final _productsBloc = ProductsBloc();
 
   @override

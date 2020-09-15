@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "391636068781",
+    "firebase_url": "https://flutter-productos-81311.firebaseio.com",
+    "project_id": "flutter-productos-81311",
+    "storage_bucket": "flutter-productos-81311.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:391636068781:android:041ce47b20ebfbaedf9924",
+        "android_client_info": {
+          "package_name": "pe.rrondan.flutter_form_validation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "391636068781-dcrhi5js8u4dn68qsnl31ron6foo7fii.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3NZ_5eQKiG2WL8Boh6t4-QC96nvx8xQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "391636068781-dcrhi5js8u4dn68qsnl31ron6foo7fii.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

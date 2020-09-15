@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_validation/src/bloc/products_bloc.dart';
+import 'package:flutter_form_validation/src/bloc/products_firebase_bloc.dart';
 import 'package:flutter_form_validation/src/bloc/provider.dart';
 import 'package:flutter_form_validation/src/dialogs/progress_dialog.dart';
 import 'package:flutter_form_validation/src/models/producto_model.dart';
@@ -23,13 +24,13 @@ class _ProductPageState extends State<ProductPage> {
   File _photo;
   bool _loading = false;
   ProgressDialog _progressDialog;
-  ProductsBloc _productsBloc;
+  ProductsFirebaseBloc _productsBloc;
 
   @override
   Widget build(BuildContext context) {
     final ProductoModel prodData = ModalRoute.of(context).settings.arguments;
     if(_productsBloc == null){
-      _productsBloc = Provider.productsBloc(context);
+      _productsBloc = Provider.of(context).productsFirebaseBloc;
     }
     if(prodData != null){
       _producto = prodData;
