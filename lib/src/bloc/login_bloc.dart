@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_form_validation/src/bloc/validators.dart';
+import 'package:flutter_form_validation/src/providers/usuario_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class LoginBloc with Validators{
 
   final _emailController    = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
+  final _usuarioProvider    = UsuarioProvider();
 
   //Insertar Valores al Stream
   Function(String) get changeEmail    => _emailController.sink.add;
@@ -31,6 +33,21 @@ class LoginBloc with Validators{
     _emailController?.close();
     _passwordController?.close();
   }
+
+  void cleanEmailPassword(){
+    changeEmail("");
+    changePassword("");
+  }
+
+
+  Future<Map<String, dynamic>> createUser() async{
+    return _usuarioProvider.createUser(email, password);
+  }
+
+  Future<Map<String, dynamic>> loginUser() async{
+    return _usuarioProvider.loginUser(email, password);
+  }
+
 
 
 }

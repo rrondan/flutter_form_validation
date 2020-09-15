@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_form_validation/src/models/producto_model.dart';
+import 'package:flutter_form_validation/src/shared_prefs/preferencias_usuario.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
@@ -11,9 +12,10 @@ import 'package:mime_type/mime_type.dart';
 class ProductsProvider{
 
   String _url = "https://flutter-productos-81311.firebaseio.com/";
+  final _prefs = PreferenciasUsuario();
 
   Future<bool> createProduct(ProductoModel product) async{
-    final url = "$_url/productos.json";
+    final url = "$_url/productos.json?auth=${_prefs.token}";
     final resp = await http.post(url, body: productToJson(product));
     final decodedData = json.decode(resp.body);
     print(decodedData);
@@ -21,11 +23,19 @@ class ProductsProvider{
   }
 
   Future<List<ProductoModel>> cargarProductos() async {
-    final url = "$_url/productos.json";
+    final url = "$_url/productos.json?auth=${_prefs.token}";
     final resp = await http.get(url);
+
+    print("responseStatusCode: ${resp.statusCode}");
+    print("response: ${resp.body}");
+
     Map<String, dynamic> decodedData = json.decode(resp.body);
     final List<ProductoModel> products = new List();
     if(decodedData == null) return [];
+
+    if(decodedData.containsKey("error")){
+      return [];
+    }
 
     decodedData.forEach((id, prod) {
       final prodTemp = ProductoModel.fromJson(prod);
@@ -37,13 +47,13 @@ class ProductsProvider{
   }
 
   Future<int> deleteProduct( String id ) async{
-    final url = "$_url/productos/$id.json";
+    final url = "$_url/productos/$id.json?auth=${_prefs.token}";
     final resp = await http.delete(url);
     return 1;
   }
 
   Future<bool> editProduct(ProductoModel product) async{
-    final url = "$_url/productos/${product.id}.json";
+    final url = "$_url/productos/${product.id}.json?auth=${_prefs.token}";
     final resp = await http.put(url, body: productToJson(product));
     final decodedData = json.decode(resp.body);
     print(decodedData);

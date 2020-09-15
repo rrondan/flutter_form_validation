@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_form_validation/src/bloc/login_bloc.dart';
 import 'package:flutter_form_validation/src/bloc/provider.dart';
 import 'package:flutter_form_validation/src/dialogs/progress_dialog.dart';
-import 'package:flutter_form_validation/src/shared_prefs/preferencias_usuario.dart';
 import 'package:flutter_form_validation/src/utils/utils.dart';
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
+
+  ProgressDialog _progressDialog;
 
   @override
   Widget build(BuildContext context) {
-    final _prefs = new PreferenciasUsuario();
-    print(_prefs.token);
+    if(_progressDialog == null) _progressDialog = ProgressDialog(context);
     return Scaffold(
       //backgroundColor: Colors.red,
       body: Stack(
@@ -102,7 +102,7 @@ class LoginPage extends StatelessWidget {
               ),
               child: Column(
                 children: <Widget>[
-                  Text("Ingreso", style: TextStyle(fontSize: 20)),
+                  Text("Crear Cuenta", style: TextStyle(fontSize: 20)),
                   SizedBox(height: 60.0),
                   _emailTextField(bloc),
                   SizedBox(height: 30.0),
@@ -113,10 +113,10 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             FlatButton(
-              child: Text("Crear una nueva cuenta"),
+              child: Text("¿Ya tienes cuenta? Login"),
               onPressed: () {
                 bloc.cleanEmailPassword();
-                Navigator.pushReplacementNamed(context, "register");
+                Navigator.pushReplacementNamed(context, "login");
               },
             ),
             SizedBox(height: 30.0),
@@ -181,23 +181,26 @@ class LoginPage extends StatelessWidget {
         return RaisedButton(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-            child: Text("Ingresar"),
+            child: Text("Crear"),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0)
           ),
           color: Colors.deepPurple,
           textColor: Colors.white,
-          onPressed: snapshot.hasData ? () => _login(bloc, context) : null
+          onPressed: snapshot.hasData ? () => _register(bloc, context) : null
         );
       }
     );
   }
 
-  void _login(LoginBloc bloc, BuildContext context) async{
-    ProgressDialog _progressDialog = new ProgressDialog(context);
+  void _register(LoginBloc bloc, BuildContext context) async{
+    print("==============");
+    print("email: ${bloc.email}");
+    print("password: ${bloc.password}");
+    print("==============");
     _progressDialog.show();
-    Map info = await bloc.loginUser();
+    Map info = await bloc.createUser();
     _progressDialog.hide();
     if(info['ok']){
       Navigator.pushReplacementNamed(context, "home");
